@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sit Spot Journal</title>
+<meta name="theme-color" content="#1a3a2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sit Spot">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="description" content="A sit spot journal from The Outdoor Practice. Same place, different day. Notice the land, track your visitors, and watch the year turn.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one calm column, like a field notebook. Tree mark header, three tabs, then the page. */
+:root {
+  --bg: #f5f0e8;
+  --surface: #fbf8f2;
+  --ink: #26302a;
+  --muted: #6b7068;
+  --line: #ddd5c7;
+  --forest: #1a3a2a;
+  --moss: #4f6b42;
+  --ember: #c4622a;
+  --ember-soft: rgba(196, 98, 42, 0.10);
+  --moss-soft: rgba(79, 107, 66, 0.10);
+  --focus: #c4622a;
+  --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121915; --surface: #19221c; --ink: #e6e0d4; --muted: #9ca296; --line: #2d3a31;
+    --forest: #d3e2cb; --moss: #8fae7d; --ember: #e08a5a;
+    --ember-soft: rgba(224, 138, 90, 0.14); --moss-soft: rgba(143, 174, 125, 0.12); --focus: #e08a5a;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); color: var(--forest); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: 2.4rem; font-weight: 500; }
+h2 { font-size: 1.7rem; font-weight: 500; }
+h3 { font-size: 1.25rem; }
+p { margin: 0; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+a { color: var(--moss); }
+
+/* Header */
+.brand { display: flex; align-items: center; gap: 10px; color: var(--forest); }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: var(--forest); }
+.head { display: flex; flex-direction: column; gap: 10px; }
+.tagline { font-family: var(--display); font-style: italic; font-size: 1.15rem; color: var(--ember); }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.tab {
+  background: none; border: 0; padding: 10px 14px 9px; cursor: pointer; color: var(--muted);
+  font-size: 0.9rem; font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected="true"] { color: var(--forest); border-bottom-color: var(--ember); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 9px 18px;
+  border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 0.9rem; font-weight: 500;
+}
+.btn:hover { border-color: var(--moss); }
+.btn.primary { background: var(--forest); color: var(--bg); border-color: var(--forest); }
+.btn.primary:hover { opacity: 0.92; }
+.btn.danger { color: var(--ember); border-color: var(--ember); background: transparent; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); padding-inline: 4px; }
+.btn.small { padding: 5px 12px; font-size: 0.82rem; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spread { justify-content: space-between; }
+
+/* Journal list */
+.list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.item {
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 4px 12px; align-items: baseline;
+  padding: 14px 4px; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-inline: 0; border-top: 0; text-align: left; width: 100%;
+}
+.item:hover { background: var(--moss-soft); }
+.num { font-family: var(--display); font-size: 1.5rem; color: var(--ember); font-variant-numeric: tabular-nums lining-nums; line-height: 1; }
+.item-main { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.item-title { font-family: var(--display); font-size: 1.25rem; font-weight: 600; color: var(--forest); line-height: 1.2; overflow-wrap: anywhere; }
+.item-meta { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.item-date { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.chip { font-size: 0.72rem; padding: 1px 8px; border-radius: 999px; background: var(--moss-soft); color: var(--moss); font-weight: 500; }
+.chip.warm { background: var(--ember-soft); color: var(--ember); }
+
+.empty { border: 1px dashed var(--line); border-radius: 14px; padding: 28px 22px; display: flex; flex-direction: column; gap: 12px; background: var(--surface); }
+.empty p { color: var(--muted); max-width: 52ch; }
+
+/* Editor */
+.sheet { display: flex; flex-direction: column; gap: 26px; }
+.sheet-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.status { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+.status.err { color: var(--ember); }
+.section { display: flex; flex-direction: column; gap: 16px; padding-top: 18px; border-top: 1px solid var(--forest); }
+.section-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.section-head .hint { font-family: var(--display); font-style: italic; color: var(--ember); font-size: 1.05rem; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--forest); }
+.label em { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); font-size: 0.8rem; margin-left: 6px; }
+input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea {
+  width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 6px 2px; border-radius: 0;
+}
+textarea { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface); resize: vertical; line-height: 1.65; }
+input:focus, textarea:focus { outline: none; border-color: var(--moss); }
+textarea.mid { min-height: 84px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.toggles button {
+  border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: 0.85rem;
+}
+.toggles button[aria-pressed="true"] { background: var(--moss); color: var(--bg); border-color: var(--moss); }
+.scale { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.scale button {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--moss); background: transparent; cursor: pointer;
+  font-size: 0.8rem; color: var(--moss); font-variant-numeric: tabular-nums;
+}
+.scale button[aria-pressed="true"] { background: var(--moss); color: var(--bg); }
+.scale .ends { font-size: 0.75rem; color: var(--muted); }
+.loc { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+.shields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.shield {
+  text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: transparent; cursor: pointer;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.shield b { font-family: var(--display); font-size: 1.15rem; color: var(--forest); font-weight: 600; }
+.shield span { font-size: 0.8rem; color: var(--muted); }
+.shield[aria-pressed="true"] { border-color: var(--ember); background: var(--ember-soft); }
+.confirm { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.88rem; color: var(--ember); }
+
+/* Patterns */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { text-align: left; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--forest); font-weight: 600; padding: 8px 6px; border-bottom: 1px solid var(--forest); white-space: nowrap; }
+td { padding: 10px 6px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
+td.n { color: var(--ember); font-weight: 600; width: 3.5em; }
+td.v { font-family: var(--display); font-size: 1.15rem; color: var(--forest); font-weight: 600; }
+td.d { white-space: nowrap; color: var(--muted); font-size: 0.85rem; }
+.block { display: flex; flex-direction: column; gap: 12px; }
+.months { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.month { display: grid; grid-template-columns: 9em 3em 1fr; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.month .m { font-family: var(--display); font-size: 1.1rem; color: var(--forest); font-weight: 600; }
+.month .c { color: var(--ember); font-weight: 600; font-variant-numeric: tabular-nums; }
+.month .chips { margin: 0; min-width: 0; }
+svg text { font-family: var(--body); }
+.chart { width: 100%; height: auto; display: block; }
+.ax { stroke: var(--line); stroke-width: 1; }
+.axl { fill: var(--muted); font-size: 11px; }
+.l-arrive { stroke: var(--muted); stroke-width: 2; fill: none; stroke-dasharray: 4 4; }
+.l-leave { stroke: var(--moss); stroke-width: 2.5; fill: none; }
+.d-arrive { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; }
+.d-leave { fill: var(--moss); }
+.legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px dashed var(--muted); vertical-align: middle; margin-right: 6px; }
+.legend i.leave { border-top: 2.5px solid var(--moss); }
+.compass { width: min(100%, 420px); height: auto; display: block; margin: 0 auto; }
+.c-ring { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.c-cross { stroke: var(--line); stroke-width: 1; }
+.c-dir { fill: var(--forest); font-family: var(--display); font-size: 19px; font-weight: 600; }
+.c-sub { fill: var(--muted); font-size: 12px; letter-spacing: 0.06em; }
+.c-num { fill: var(--moss); font-family: var(--display); font-size: 30px; font-weight: 600; }
+.c-num.top { fill: var(--ember); }
+.c-dot { fill: var(--moss-soft); stroke: var(--moss); stroke-width: 1; }
+.c-dot.top { fill: var(--ember-soft); stroke: var(--ember); }
+.stat { display: flex; gap: 24px; flex-wrap: wrap; }
+.stat div { display: flex; flex-direction: column; }
+.stat b { font-family: var(--display); font-size: 1.8rem; color: var(--forest); font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.78rem; color: var(--muted); }
+
+/* Guide */
+.guide { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+details { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; padding: 14px 2px; list-style: none; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+summary::-webkit-details-marker { display: none; }
+summary h3 { font-size: 1.35rem; }
+summary .plus { color: var(--ember); font-size: 1.2rem; transition: transform .2s; }
+details[open] summary .plus { transform: rotate(45deg); }
+.g-body { padding: 0 2px 20px; display: flex; flex-direction: column; gap: 10px; max-width: 62ch; }
+.g-lead { font-family: var(--display); font-style: italic; color: var(--ember); font-size: 1.1rem; }
+.g-body ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; }
+.g-body li::marker { color: var(--ember); }
+.g-body strong { color: var(--forest); font-weight: 600; }
+.g-sub { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--forest); margin-top: 6px; }
+
+.foot { font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+.toast { font-size: 0.82rem; color: var(--muted); }
+
+@media (max-width: 520px) {
+  h1 { font-size: 2rem; }
+  .grid3 { grid-template-columns: 1fr 1fr; }
+  .grid3 .wide { grid-column: 1 / -1; }
+  .grid2 { grid-template-columns: 1fr; }
+  .item { grid-template-columns: 36px 1fr; }
+  .item-date { grid-column: 2; }
+  .month { grid-template-columns: 1fr auto; }
+  .month .chips { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--moss)" stroke-width="3.5"/>
+        <g stroke="currentColor" stroke-width="3.5" fill="none">
+          <line x1="50" y1="12" x2="50" y2="88"/>
+          <polyline points="32.5,47.5 50,30 67.5,47.5"/>
+          <polyline points="36,59 50,45 64,59"/>
+        </g>
+      </svg>
+      <span class="eyebrow">The Outdoor Practice</span>
+    </div>
+    <h1>Sit Spot Journal</h1>
+    <p class="tagline">Same place. Different day.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-journal" data-view="journal" aria-selected="true">Journal</button>
+    <button class="tab" role="tab" id="tab-patterns" data-view="patterns" aria-selected="false">Patterns</button>
+    <button class="tab" role="tab" id="tab-guide" data-view="guide" aria-selected="false">Guide</button>
+  </nav>
+
+  <main id="view" aria-live="polite"></main>
+
+  <footer class="foot">Saved in this browser only, on this device. Export a copy now and again, and always before clearing your browsing data.</footer>
+</div>
+
+<template id="guide-tpl">
+  <div class="guide">
+    <details open>
+      <summary><h3>How to use this journal</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">Take what you need. Everything here is an invitation.</p>
+        <ul>
+          <li><strong>Sit first, write after.</strong> Leave the phone in your pocket while you sit. Tap <strong>New sit</strong> once you're done and capture what you noticed.</li>
+          <li><strong>Tag your visitors.</strong> Add birds, animals, plants and insects to <strong>Visitors</strong>, separated by commas. They gather on the Patterns tab, with when you first and last saw them.</li>
+          <li><strong>Try the Four Shields.</strong> If you like, pick the direction that felt most alive. It's optional. The compass on the Patterns tab shows where your sits tend to sit.</li>
+          <li><strong>Watch the year turn.</strong> The Patterns tab lays your sits out month by month, and shows how settled you felt arriving and leaving.</li>
+        </ul>
+        <p class="g-sub">Add it to your home screen</p>
+        <p>It then opens like an app, full screen, with the tree icon.</p>
+        <ul>
+          <li><strong>iPhone.</strong> Open this page in Safari. Tap the <strong>Share</strong> button, then <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
+          <li><strong>Android.</strong> Open this page in Chrome. Tap the <strong>⋮</strong> menu, then <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
+          <li><strong>Do this first, then always use the icon.</strong> On iPhone, the home screen version keeps its own copy of your sits, separate from Safari. Safari can also clear data for sites you haven't opened in a while, which home screen apps are protected from.</li>
+        </ul>
+        <p class="g-sub">Keeping your sits safe</p>
+        <ul>
+          <li><strong>Saved in this browser only.</strong> Your sits live on this one device. Clearing your browsing data, using a private window or changing phone will lose them.</li>
+          <li><strong>Export now and again.</strong> On the Journal or Patterns tab, tap <strong>Export</strong> to save every sit as a text file. Do it every few weeks, and always before you clear your browsing data or change phone.</li>
+          <li><strong>Your location stays with you.</strong> If you save a location, it's stored on your device only. Nothing is sent anywhere.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary><h3>What a sit spot is</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">One place. Visited again and again. Until it starts to know you back.</p>
+        <p>A sit spot is a single place outdoors that you return to regularly, and sit quietly. That's it. No task, no goal, no performance.</p>
+        <p>The magic is in the repetition. The first time, you see a tree. By the tenth, you know which branch the robin sings from, where the puddle forms after rain, and what the light does at four o'clock in November. You stop being a visitor and start becoming part of the place.</p>
+        <p>The practice was popularised by Jon Young, a naturalist and tracker, as a core routine of nature connection. Many outdoor practitioners now use it with clients and for themselves.</p>
+      </div>
+    </details>
+    <details>
+      <summary><h3>Choosing your spot</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">Close beats beautiful. The best spot is the one you'll actually go to.</p>
+        <ul>
+          <li><strong>Near home.</strong> Five minutes away will get visited. Forty minutes away will become a nice idea.</li>
+          <li><strong>A city park bench counts.</strong> So does a canal towpath, a corner of the allotment, or the back step. Bushcraft to the city.</li>
+          <li><strong>Somewhere with life.</strong> A bit of edge helps: where trees meet grass, or land meets water. Edges are where the wildlife is busiest.</li>
+          <li><strong>Somewhere you feel safe enough</strong> to soften your attention. If you're on guard the whole time, choose again.</li>
+          <li><strong>Stick with it.</strong> Give one spot a full season before you change it.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary><h3>How to sit</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">Arrive. Open. Stay. Let it be simple.</p>
+        <ul>
+          <li><strong>Arrive.</strong> Walk the last bit slowly. Notice your breath and your feet. Let the day's noise settle.</li>
+          <li><strong>Open the senses, one at a time.</strong> What can you hear, near and far? What can you smell? What's touching your skin? Then let them all run together.</li>
+          <li><strong>Owl eyes.</strong> Soften your gaze and take in the whole view at once, edges included. This wide-angle vision picks up movement and tends to calm the nervous system.</li>
+          <li><strong>Stay still.</strong> Around twenty minutes is a good aim. Wildlife that scattered when you arrived often returns once you've gone quiet.</li>
+          <li><strong>Leave gently.</strong> Before you go, notice one thing you'd like to carry into the day.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary><h3>Reading the place</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">The birds will tell you what's happening, once you learn to listen.</p>
+        <p>Over time, you'll get a feel for the <em>baseline</em>: what your spot sounds and looks like when all is calm. Once you know the baseline, you notice when it changes.</p>
+        <ul>
+          <li><strong>Song and contact calls</strong> usually mean all is well. Birds are feeding, singing and keeping in touch.</li>
+          <li><strong>Alarm calls</strong> are sharp, repeated and urgent. They often mean a cat, a hawk, a dog or a person is moving through.</li>
+          <li><strong>Sudden silence</strong> can say as much as any call.</li>
+          <li><strong>You're part of it.</strong> Notice how the place responds to your arrival, and how long it takes to settle back.</li>
+        </ul>
+        <p>Jon Young's <em>What the Robin Knows</em> goes much deeper into bird language, if this catches you.</p>
+      </div>
+    </details>
+    <details>
+      <summary><h3>Nature as mirror</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">What you notice out there often says something about what's going on in here.</p>
+        <p>Some days you'll be drawn to the oak that hasn't moved in two hundred years. Other days, the wind ripping through the branches. Neither is random.</p>
+        <ul>
+          <li><strong>Just notice.</strong> What caught your eye today? What did it stir in you?</li>
+          <li><strong>Stay with it.</strong> No need to turn it into meaning straight away. Let the image sit.</li>
+          <li><strong>Inner weather.</strong> The journal asks how settled you felt arriving and leaving. Over time, you'll see what the practice is doing for you.</li>
+        </ul>
+        <p>Nature is the co-facilitator. You don't have to do all the work.</p>
+      </div>
+    </details>
+    <details>
+      <summary><h3>The Four Shields: an introduction</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">A compass for human nature, laid over the seasons of the year.</p>
+        <p>The Four Shields is a model from Steven Foster and Meredith Little, founders of the School of Lost Borders, a wilderness rites of passage school. It maps the human psyche onto the four directions, the four seasons and the stages of a life.</p>
+        <ul>
+          <li><strong>South: summer, the child.</strong> The body, feeling, instinct and play. Being fully alive in the senses.</li>
+          <li><strong>West: autumn, the adolescent.</strong> Turning inward. Dreams, shadow, introspection and the search for who we really are.</li>
+          <li><strong>North: winter, the adult.</strong> The mind, responsibility and holding others. Structure, service and getting things done.</li>
+          <li><strong>East: spring, the elder.</strong> Spirit, insight and renewal. Dawn after the long night.</li>
+        </ul>
+        <p>The idea is that a whole person moves around all four. Most of us get stuck in one or two, and the others call to us.</p>
+        <p class="g-sub">Using it at your sit spot</p>
+        <ul>
+          <li>After a sit, ask which direction felt most alive. Pick it in the journal if one stands out.</li>
+          <li>Over the months, the compass on the Patterns tab shows where you tend to live, and which directions you visit less.</li>
+          <li>Try sitting facing a different direction, and notice what changes.</li>
+        </ul>
+        <p>This is a light introduction to a deep model. Foster and Little's work echoes older earth-based traditions. We offer it here as one map among many, and as they shared it, not as a teaching we own. Their book, <em>The Four Shields</em>, goes much further.</p>
+      </div>
+    </details>
+    <details>
+      <summary><h3>Safety and access</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">Look after yourself, so you can soften.</p>
+        <ul>
+          <li><strong>Let someone know</strong> where you'll be if your spot is quiet or remote.</li>
+          <li><strong>Dress for sitting still.</strong> You'll get colder than you expect. A sit mat helps.</li>
+          <li><strong>Dusk and dark</strong> can be beautiful, but choose a spot you know well for them.</li>
+          <li><strong>Ticks</strong> live in long grass and bracken. Check yourself afterwards.</li>
+          <li><strong>Access is for everyone.</strong> A bench by a path, a wheelchair-friendly spot, a balcony or an open window all count. On hard days, a window is enough.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary><h3>Further reading</h3><span class="plus">+</span></summary>
+      <div class="g-body">
+        <p class="g-lead">Take what you need. Leave the rest on the shelf.</p>
+        <ul>
+          <li><strong>What the Robin Knows.</strong> Jon Young. Bird language, the baseline and the sit spot.</li>
+          <li><strong>Coyote's Guide to Connecting with Nature.</strong> Jon Young, Ellen Haas and Evan McGown. The core routines of nature connection, including the sit spot.</li>
+          <li><strong>The Forest Unseen.</strong> David Haskell. A biologist watches one square metre of woodland for a year. A sit spot in book form.</li>
+          <li><strong>The Four Shields.</strong> Steven Foster and Meredith Little. The full model behind the compass in this journal.</li>
+        </ul>
+        <p>rewildingtherapies.com</p>
+      </div>
+    </details>
+  </div>
+</template>
+
+<script>
+const KEY = "top-sit-spot-v1";
+const WEATHER = ["Sun", "Cloud", "Rain", "Drizzle", "Wind", "Still", "Fog", "Frost", "Snow"];
+const TEMP = ["Cold", "Cool", "Mild", "Warm", "Hot"];
+const SHIELDS = [
+  { id: "South", sub: "Summer · the child", hint: "Body, feeling, play" },
+  { id: "West", sub: "Autumn · the adolescent", hint: "Inward, dreams, shadow" },
+  { id: "North", sub: "Winter · the adult", hint: "Mind, responsibility" },
+  { id: "East", sub: "Spring · the elder", hint: "Spirit, insight, renewal" },
+];
+
+const state = { view: "journal", sits: [], editingId: null, draft: null, dirty: false, confirmDelete: false, status: "", statusErr: false, locMsg: "" };
+let saveTimer = null, exportMsg = "";
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = (n) => String(n).padStart(2, "0");
+const today = () => { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+const nowTime = () => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+const fmtDate = (s) => { if (!s) return ""; const d = new Date(s + "T12:00:00"); return isNaN(d) ? s : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); };
+const tags = (s) => String(s || "").split(",").map(t => t.trim()).filter(Boolean);
+
+function blank() {
+  const last = sorted().slice(-1)[0];
+  return {
+    date: today(), time: nowTime(), minutes: "", place: last ? last.place || "" : "", coords: null,
+    weather: [], temp: "", arrive: 0, leave: 0,
+    seen: "", heard: "", smelled: "", felt: "",
+    visitors: "", changed: "", inner: "", shield: "", shieldNote: "", carry: "", created: Date.now(),
+  };
+}
+function sorted() { return [...state.sits].sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.time || "").localeCompare(b.time || "") || (a.created || 0) - (b.created || 0)); }
+function numberOf(id) { const i = sorted().findIndex(d => d.id === id); return i < 0 ? sorted().length + 1 : i + 1; }
+
+/* ---------- Storage ---------- */
+function load() { try { const raw = localStorage.getItem(KEY); state.sits = raw ? JSON.parse(raw) : []; } catch (e) { state.sits = []; } }
+function saveAll() { try { localStorage.setItem(KEY, JSON.stringify(state.sits)); return true; } catch (e) { return false; } }
+function persist() {
+  if (!state.draft) return;
+  const rec = { ...structuredClone(state.draft), id: state.editingId };
+  const i = state.sits.findIndex(d => d.id === rec.id);
+  if (i < 0) state.sits.push(rec); else state.sits[i] = rec;
+  const ok = saveAll();
+  state.dirty = false; state.statusErr = !ok;
+  state.status = ok ? "Saved" : "Couldn't save in this browser. Export a copy to keep it safe.";
+  paintStatus();
+}
+function scheduleSave() {
+  state.dirty = true; state.status = "Editing…"; state.statusErr = false; paintStatus();
+  clearTimeout(saveTimer); saveTimer = setTimeout(persist, 700);
+}
+function flush() { if (state.dirty) { clearTimeout(saveTimer); persist(); } }
+
+/* ---------- Navigation ---------- */
+function go(view) {
+  if (state.view === "edit" && view !== "edit") flush();
+  state.view = view;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.view === view || (view === "edit" && t.dataset.view === "journal"))));
+  render(); window.scrollTo({ top: 0 });
+}
+function openSit(id) {
+  const d = state.sits.find(x => x.id === id);
+  state.editingId = id; state.draft = structuredClone({ ...blank(), ...d }); state.dirty = false;
+  state.confirmDelete = false; state.status = ""; state.locMsg = ""; go("edit");
+}
+function newSit() {
+  state.editingId = "sit-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  state.draft = blank(); state.confirmDelete = false; state.status = ""; state.locMsg = ""; state.dirty = false; go("edit");
+}
+function removeSit(id) {
+  state.sits = state.sits.filter(d => d.id !== id); saveAll();
+  state.editingId = null; state.draft = null; state.dirty = false; state.confirmDelete = false; go("journal");
+}
+
+/* ---------- Rendering ---------- */
+function paintStatus() { const s = $("#status"); if (s) { s.textContent = state.status; s.classList.toggle("err", state.statusErr); } }
+function render() {
+  const v = $("#view");
+  if (state.view === "journal") v.innerHTML = journalHTML();
+  else if (state.view === "patterns") v.innerHTML = patternsHTML();
+  else if (state.view === "guide") { v.innerHTML = ""; v.appendChild($("#guide-tpl").content.cloneNode(true)); }
+  else if (state.view === "edit") { v.innerHTML = editHTML(); bindEditor(); }
+}
+
+function journalHTML() {
+  const all = sorted(); const list = [...all].reverse();
+  const top = `<div class="row spread"><h2>${list.length ? list.length + (list.length === 1 ? " sit" : " sits") : "Your sits"}</h2>
+    <div class="row"><button class="btn export-btn">Export</button><button class="btn primary" id="new">+ New sit</button></div></div>`;
+  const msg = exportMsg ? `<p class="toast">${esc(exportMsg)}</p>` : "";
+  if (!list.length) {
+    return `<div class="sheet">${top}
+      <div class="empty">
+        <h3>Nothing here yet</h3>
+        <p>Your sits will gather here, newest first, with the weather, your visitors and the direction that felt alive. Go and sit first. Then tap <strong>New sit</strong> and write down what you noticed.</p>
+        <p>New to this? The <strong>Guide</strong> tab covers how to choose a spot, how to sit, and the Four Shields.</p>
+      </div></div>${msg}`;
+  }
+  return `<div class="sheet">${top}<div class="list">${list.map(d => {
+    const n = all.indexOf(d) + 1;
+    const vis = tags(d.visitors).slice(0, 4);
+    const weather = [d.temp, ...(d.weather || [])].filter(Boolean).join(", ");
+    const title = d.carry || d.place || "Sit";
+    return `<button class="item" data-id="${esc(d.id)}">
+      <span class="num">${pad(n)}</span>
+      <span class="item-main">
+        <span class="item-title">${esc(title)}</span>
+        <span class="item-meta">${[d.carry && d.place ? d.place : "", weather, d.minutes ? d.minutes + " min" : ""].filter(Boolean).map(esc).join(" · ")}</span>
+        ${vis.length || d.shield ? `<span class="chips">${vis.map(s => `<span class="chip">${esc(s)}</span>`).join("")}${d.shield ? `<span class="chip warm">${esc(d.shield)}</span>` : ""}</span>` : ""}
+      </span>
+      <span class="item-date">${esc(fmtDate(d.date))}</span>
+    </button>`;
+  }).join("")}</div></div>${msg}`;
+}
+
+function patternsHTML() {
+  const all = sorted();
+  if (!all.length) {
+    return `<div class="sheet"><div class="empty"><h3>Patterns grow with time</h3>
+      <p>After a few sits, this page shows who keeps visiting your spot, how the months change, how settled you feel arriving and leaving, and where you sit on the Four Shields compass.</p></div></div>`;
+  }
+  // Visitors
+  const map = new Map();
+  all.forEach((d, i) => tags(d.visitors).forEach(t => {
+    const k = t.toLowerCase();
+    if (!map.has(k)) map.set(k, { name: t, count: 0, first: d.date, last: d.date });
+    const e = map.get(k); e.count++; e.last = d.date;
+  }));
+  const vis = [...map.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  // Months
+  const months = new Map();
+  all.forEach(d => {
+    const k = (d.date || "").slice(0, 7); if (!k) return;
+    if (!months.has(k)) months.set(k, { n: 0, vis: new Map() });
+    const m = months.get(k); m.n++;
+    tags(d.visitors).forEach(t => m.vis.set(t.toLowerCase(), t));
+  });
+  const monthRows = [...months.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([k, m]) => {
+    const label = new Date(k + "-15T12:00:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+    const v = [...m.vis.values()].slice(0, 8);
+    return `<div class="month"><span class="m">${esc(label)}</span><span class="c">${m.n}</span><span class="chips">${v.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</span></div>`;
+  }).join("");
+  const totalMin = all.reduce((s, d) => s + (parseFloat(d.minutes) || 0), 0);
+  const msg = exportMsg ? `<p class="toast">${esc(exportMsg)}</p>` : "";
+  return `<div class="sheet">
+    <div class="row spread"><h2>Patterns</h2><button class="btn export-btn">Export all sits</button></div>
+    ${msg}
+    <div class="stat">
+      <div><b>${all.length}</b><span>${all.length === 1 ? "sit" : "sits"}</span></div>
+      <div><b>${Math.round(totalMin / 60 * 10) / 10}</b><span>hours sitting</span></div>
+      <div><b>${vis.length}</b><span>different visitors</span></div>
+      <div><b>${months.size}</b><span>${months.size === 1 ? "month" : "months"}</span></div>
+    </div>
+
+    <section class="section block">
+      <div class="section-head"><h3>Visitors</h3><span class="hint">who keeps turning up</span></div>
+      ${vis.length ? `<div class="table-wrap"><table><thead><tr><th>Visitor</th><th>Sits</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>
+        ${vis.map(s => `<tr><td class="v">${esc(s.name)}</td><td class="n">${s.count}</td><td class="d">${esc(fmtDate(s.first))}</td><td class="d">${esc(fmtDate(s.last))}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="toast">Add visitors to a sit, separated by commas. Robin, wren, holly. They'll collect here.</p>`}
+    </section>
+
+    <section class="section block">
+      <div class="section-head"><h3>Seasons</h3><span class="hint">the year turning at one spot</span></div>
+      <div class="months">${monthRows}</div>
+    </section>
+
+    <section class="section block">
+      <div class="section-head"><h3>Settling</h3><span class="hint">arriving and leaving</span></div>
+      ${settleChart(all)}
+    </section>
+
+    <section class="section block">
+      <div class="section-head"><h3>Four Shields</h3><span class="hint">where your sits tend to live</span></div>
+      ${compass(all)}
+    </section>
+  </div>`;
+}
+
+function settleChart(all) {
+  const pts = all.filter(d => d.arrive && d.leave).slice(-20);
+  if (pts.length < 2) return `<p class="toast">Rate how settled you feel arriving and leaving on at least two sits, and a chart will appear here.</p>`;
+  const W = 600, H = 190, L = 30, R = 14, T = 14, B = 26;
+  const x = i => L + (pts.length === 1 ? 0 : i * (W - L - R) / (pts.length - 1));
+  const y = v => T + (5 - v) * (H - T - B) / 4;
+  const grid = [1, 2, 3, 4, 5].map(v => `<line class="ax" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="axl" x="${L - 10}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join("");
+  const line = (k) => pts.map((d, i) => `${x(i).toFixed(1)},${y(d[k]).toFixed(1)}`).join(" ");
+  const dots = (k, cls) => pts.map((d, i) => `<circle class="${cls}" cx="${x(i).toFixed(1)}" cy="${y(d[k]).toFixed(1)}" r="${k === "leave" ? 4 : 3.5}"/>`).join("");
+  const n0 = all.indexOf(pts[0]) + 1, n1 = all.indexOf(pts[pts.length - 1]) + 1;
+  const avgA = pts.reduce((s, d) => s + d.arrive, 0) / pts.length, avgL = pts.reduce((s, d) => s + d.leave, 0) / pts.length;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="How settled you felt arriving and leaving, sits ${n0} to ${n1}">
+      ${grid}
+      <polyline class="l-arrive" points="${line("arrive")}"/>
+      <polyline class="l-leave" points="${line("leave")}"/>
+      ${dots("arrive", "d-arrive")}${dots("leave", "d-leave")}
+      <text class="axl" x="${L}" y="${H - 6}">Sit ${pad(n0)}</text>
+      <text class="axl" x="${W - R}" y="${H - 6}" text-anchor="end">Sit ${pad(n1)}</text>
+    </svg>
+    <div class="legend"><span><i></i>Arriving · average ${avgA.toFixed(1)}</span><span><i class="leave"></i>Leaving · average ${avgL.toFixed(1)}</span></div>`;
+}
+
+function compass(all) {
+  const c = { North: 0, East: 0, South: 0, West: 0 };
+  all.forEach(d => { if (c[d.shield] !== undefined) c[d.shield]++; });
+  const total = c.North + c.East + c.South + c.West;
+  const max = Math.max(...Object.values(c));
+  const pos = {
+    North: { x: 230, y: 77,  lx: 230, ly: 18,  sub: "WINTER", a: "middle" },
+    South: { x: 230, y: 277, lx: 230, ly: 336, sub: "SUMMER", a: "middle" },
+    East:  { x: 330, y: 177, lx: 376, ly: 175, sub: "SPRING", a: "start" },
+    West:  { x: 130, y: 177, lx: 84,  ly: 175, sub: "AUTUMN", a: "end" },
+  };
+  const parts = Object.entries(pos).map(([k, p]) => {
+    const top = total && c[k] === max;
+    const r = total ? 16 + 20 * (c[k] / max) : 16;
+    return `<circle class="c-dot${top ? " top" : ""}" cx="${p.x}" cy="${p.y}" r="${r.toFixed(1)}"/>
+      <text class="c-num${top ? " top" : ""}" x="${p.x}" y="${p.y + 10}" text-anchor="middle">${c[k]}</text>
+      <text class="c-dir" x="${p.lx}" y="${p.ly}" text-anchor="${p.a}">${k}</text>
+      <text class="c-sub" x="${p.lx}" y="${p.ly + 15}" text-anchor="${p.a}">${p.sub}</text>`;
+  }).join("");
+  const svg = `<svg class="compass" viewBox="0 0 460 356" role="img" aria-label="Four Shields: North ${c.North}, East ${c.East}, South ${c.South}, West ${c.West}">
+    <circle class="c-ring" cx="230" cy="177" r="100"/>
+    <line class="c-cross" x1="230" y1="77" x2="230" y2="277"/><line class="c-cross" x1="130" y1="177" x2="330" y2="177"/>
+    ${parts}</svg>`;
+  return total ? svg : `${svg}<p class="toast">Pick a direction on a sit and it will be counted here. It's always optional.</p>`;
+}
+
+function editHTML() {
+  const d = state.draft; const n = numberOf(state.editingId);
+  const exists = state.sits.some(x => x.id === state.editingId);
+  const places = [...new Set(state.sits.map(s => s.place).filter(Boolean))];
+  const scale = (key, label) => `<div class="field"><span class="label">${label}</span>
+    <div class="scale" data-scale="${key}"><span class="ends">Busy</span>${[1,2,3,4,5].map(i => `<button type="button" data-v="${i}" aria-pressed="${d[key] === i}" aria-label="${label} ${i} of 5">${i}</button>`).join("")}<span class="ends">Settled</span></div></div>`;
+  const loc = d.coords
+    ? `<span>Location saved: ${d.coords.lat.toFixed(4)}, ${d.coords.lon.toFixed(4)}</span>
+       <a href="https://www.openstreetmap.org/?mlat=${d.coords.lat}&amp;mlon=${d.coords.lon}#map=17/${d.coords.lat}/${d.coords.lon}" target="_blank" rel="noopener">View map</a>
+       <button type="button" class="btn ghost small" id="loc-clear">Remove</button>`
+    : `<button type="button" class="btn small" id="loc-get">Use my location</button><span>Optional. Stays on this device.</span>`;
+  return `<div class="sheet">
+    <div class="row"><button class="btn ghost" id="back">← All sits</button></div>
+    <div class="sheet-head"><h2>Sit ${pad(n)}</h2><span class="status" id="status" role="status"></span></div>
+
+    <section class="section">
+      <div class="section-head"><h3>Arriving</h3><span class="hint">where, when, and what the sky was doing</span></div>
+      <div class="field"><label class="label" for="place">Location</label>
+        <input type="text" id="place" data-k="place" list="places" value="${esc(d.place)}" placeholder="e.g. the bench by the old oak, Chorlton Ees">
+        <datalist id="places">${places.map(p => `<option value="${esc(p)}"></option>`).join("")}</datalist>
+        <div class="loc" id="loc">${loc}</div>
+        ${state.locMsg ? `<p class="toast">${esc(state.locMsg)}</p>` : ""}
+      </div>
+      <div class="grid3">
+        <div class="field"><label class="label" for="date">Date</label><input type="date" id="date" data-k="date" value="${esc(d.date)}"></div>
+        <div class="field"><label class="label" for="time">Time</label><input type="time" id="time" data-k="time" value="${esc(d.time)}"></div>
+        <div class="field wide"><label class="label" for="minutes">Minutes sat</label><input type="number" id="minutes" data-k="minutes" inputmode="numeric" min="0" value="${esc(d.minutes)}" placeholder="20"></div>
+      </div>
+      <div class="field"><span class="label">Weather <em>tap all that fit</em></span>
+        <div class="toggles" data-multi="weather">${WEATHER.map(w => `<button type="button" data-val="${w}" aria-pressed="${d.weather.includes(w)}">${w}</button>`).join("")}</div></div>
+      <div class="field"><span class="label">Temperature</span>
+        <div class="toggles" data-single="temp">${TEMP.map(w => `<button type="button" data-val="${w}" aria-pressed="${d.temp === w}">${w}</button>`).join("")}</div></div>
+      ${scale("arrive", "Settled arriving")}
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h3>The senses</h3><span class="hint">just notice</span></div>
+      <div class="grid2">
+        <div class="field"><label class="label" for="seen">Seen</label><textarea id="seen" class="mid" data-k="seen">${esc(d.seen)}</textarea></div>
+        <div class="field"><label class="label" for="heard">Heard</label><textarea id="heard" class="mid" data-k="heard">${esc(d.heard)}</textarea></div>
+        <div class="field"><label class="label" for="smelled">Smelled</label><textarea id="smelled" class="mid" data-k="smelled">${esc(d.smelled)}</textarea></div>
+        <div class="field"><label class="label" for="felt">Felt <em>air, ground, skin</em></label><textarea id="felt" class="mid" data-k="felt">${esc(d.felt)}</textarea></div>
+      </div>
+      <div class="field"><label class="label" for="visitors">Visitors <em>birds, animals, plants, insects. Comma separated</em></label>
+        <input type="text" id="visitors" data-k="visitors" value="${esc(d.visitors)}" placeholder="robin, wren, holly"></div>
+      <div class="field"><label class="label" for="changed">What's changed <em>since last time</em></label><textarea id="changed" class="mid" data-k="changed">${esc(d.changed)}</textarea></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h3>Inner weather</h3><span class="hint">what the place stirred in you</span></div>
+      <div class="field"><label class="label" for="inner">What stirred in me</label><textarea id="inner" class="mid" data-k="inner">${esc(d.inner)}</textarea></div>
+      <div class="field"><span class="label">Four Shields <em>optional. Which direction felt most alive?</em></span>
+        <div class="shields" id="shields">${SHIELDS.map(s => `<button type="button" class="shield" data-val="${s.id}" aria-pressed="${d.shield === s.id}"><b>${s.id}</b><span>${s.sub}</span><span>${s.hint}</span></button>`).join("")}</div></div>
+      <div class="field" ${d.shield ? "" : "hidden"} id="shield-note-wrap"><label class="label" for="shieldNote">What this direction brought</label><input type="text" id="shieldNote" data-k="shieldNote" value="${esc(d.shieldNote)}"></div>
+      ${scale("leave", "Settled leaving")}
+      <div class="field"><label class="label" for="carry">One thing to carry <em>into the day</em></label><input type="text" id="carry" data-k="carry" value="${esc(d.carry)}" placeholder="A single line"></div>
+    </section>
+
+    <div class="row spread">
+      <button class="btn primary" id="done">Done</button>
+      ${exists ? (state.confirmDelete
+        ? `<span class="confirm">Delete this sit for good? <button class="btn danger" id="del-yes">Delete</button><button class="btn ghost" id="del-no">Keep it</button></span>`
+        : `<button class="btn ghost" id="del">Delete sit</button>`) : ""}
+    </div>
+  </div>`;
+}
+
+function bindEditor() {
+  paintStatus();
+  const v = $("#view"), d = state.draft;
+  v.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => { d[el.dataset.k] = el.value; scheduleSave(); }));
+  v.querySelectorAll("[data-multi]").forEach(group => group.addEventListener("click", e => {
+    const b = e.target.closest("button[data-val]"); if (!b) return;
+    const k = group.dataset.multi, set = new Set(d[k]);
+    set.has(b.dataset.val) ? set.delete(b.dataset.val) : set.add(b.dataset.val);
+    d[k] = WEATHER.filter(w => set.has(w));
+    b.setAttribute("aria-pressed", String(set.has(b.dataset.val))); scheduleSave();
+  }));
+  v.querySelectorAll("[data-single]").forEach(group => group.addEventListener("click", e => {
+    const b = e.target.closest("button[data-val]"); if (!b) return;
+    const k = group.dataset.single; d[k] = d[k] === b.dataset.val ? "" : b.dataset.val;
+    group.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.val === d[k]))); scheduleSave();
+  }));
+  v.querySelectorAll("[data-scale]").forEach(group => group.addEventListener("click", e => {
+    const b = e.target.closest("button[data-v]"); if (!b) return;
+    const k = group.dataset.scale, val = +b.dataset.v; d[k] = d[k] === val ? 0 : val;
+    group.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.v === d[k]))); scheduleSave();
+  }));
+  $("#shields").addEventListener("click", e => {
+    const b = e.target.closest("button[data-val]"); if (!b) return;
+    d.shield = d.shield === b.dataset.val ? "" : b.dataset.val;
+    $("#shields").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.val === d.shield)));
+    $("#shield-note-wrap").hidden = !d.shield; scheduleSave();
+  });
+  const get = $("#loc-get");
+  if (get) get.onclick = () => {
+    if (!navigator.geolocation) { state.locMsg = "This browser can't share a location. Type the place name instead."; flush(); render(); return; }
+    get.disabled = true; get.textContent = "Finding you…";
+    navigator.geolocation.getCurrentPosition(pos => {
+      d.coords = { lat: +pos.coords.latitude.toFixed(5), lon: +pos.coords.longitude.toFixed(5) };
+      state.locMsg = ""; scheduleSave(); flush(); render();
+    }, err => {
+      state.locMsg = err && err.code === 1 ? "Location wasn't allowed. You can turn it on in your browser settings, or just type the place name." : "Couldn't find your location just now. Try again outside, or type the place name.";
+      render();
+    }, { enableHighAccuracy: true, timeout: 15000 });
+  };
+  const clr = $("#loc-clear"); if (clr) clr.onclick = () => { d.coords = null; scheduleSave(); flush(); render(); };
+  $("#back").onclick = () => go("journal");
+  $("#done").onclick = () => go("journal");
+  const del = $("#del"); if (del) del.onclick = () => { flush(); state.confirmDelete = true; render(); };
+  const yes = $("#del-yes"); if (yes) yes.onclick = () => removeSit(state.editingId);
+  const no = $("#del-no"); if (no) no.onclick = () => { state.confirmDelete = false; render(); };
+}
+
+function exportText() {
+  return sorted().map((d, i) => {
+    const L = [`# Sit ${pad(i + 1)}${d.place ? ": " + d.place : ""}`,
+      [fmtDate(d.date), d.time, d.minutes ? d.minutes + " min" : "", [d.temp, ...(d.weather || [])].filter(Boolean).join(", ")].filter(Boolean).join(" · ")];
+    if (d.coords) L.push(`Location: ${d.coords.lat}, ${d.coords.lon}`);
+    L.push("");
+    [["Settled arriving", d.arrive ? d.arrive + "/5" : ""], ["Seen", d.seen], ["Heard", d.heard], ["Smelled", d.smelled], ["Felt", d.felt],
+     ["Visitors", d.visitors], ["What's changed", d.changed], ["What stirred in me", d.inner],
+     ["Four Shields", d.shield ? d.shield + (d.shieldNote ? ": " + d.shieldNote : "") : ""],
+     ["Settled leaving", d.leave ? d.leave + "/5" : ""], ["One thing to carry", d.carry]]
+      .forEach(([k, v]) => { if (v) L.push(`**${k}:** ${v}`); });
+    return L.join("\n");
+  }).join("\n\n---\n\n");
+}
+
+document.addEventListener("click", e => {
+  const tab = e.target.closest(".tab"); if (tab) { exportMsg = ""; go(tab.dataset.view); return; }
+  if (e.target.closest("#new")) { newSit(); return; }
+  const item = e.target.closest(".item"); if (item) { openSit(item.dataset.id); return; }
+  if (e.target.closest(".export-btn")) {
+    if (!state.sits.length) { exportMsg = "Nothing to export yet. Add your first sit, then export."; render(); return; }
+    try {
+      const text = "# Sit Spot Journal\n\n" + exportText() + "\n";
+      const url = URL.createObjectURL(new Blob([text], { type: "text/markdown" }));
+      const a = document.createElement("a"); a.href = url; a.download = "sit-spot-journal-" + today() + ".md";
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      exportMsg = "Exported. Check your downloads.";
+    } catch (err) { exportMsg = "Export didn't work in this browser."; }
+    render();
+  }
+});
+window.addEventListener("pagehide", flush);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); });
+
+load(); render();
+</script>
+</body>
+</html>
