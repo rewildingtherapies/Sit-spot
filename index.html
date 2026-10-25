@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sit Spot Journal</title>
-<meta name="theme-color" content="#1a3a2a">
+<meta name="theme-color" content="#15110d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sit Spot">
@@ -17,30 +17,32 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
 /* Layout: one calm column, like a field notebook. Tree mark header, three tabs, then the page. */
+/* Deliberately a single dawn-on-the-moor look, in every theme. Earth pigments: charcoal, ochre, clay, bone, lichen. */
 :root {
-  --bg: #f5f0e8;
-  --surface: #fbf8f2;
-  --ink: #26302a;
-  --muted: #6b7068;
-  --line: #ddd5c7;
-  --forest: #1a3a2a;
-  --moss: #4f6b42;
-  --ember: #c4622a;
-  --ember-soft: rgba(196, 98, 42, 0.10);
-  --moss-soft: rgba(79, 107, 66, 0.10);
-  --focus: #c4622a;
+  --bg: #15110d;
+  --surface: rgba(30, 23, 18, 0.82);
+  --solid: #1e1712;
+  --ink: #efe6d6;
+  --muted: #b8ab96;
+  --line: rgba(239, 230, 214, 0.15);
+  --forest: #f5ebd9;
+  --moss: #bcc68f;
+  --ember: #dc8d50;
+  --ember-soft: rgba(220, 141, 80, 0.15);
+  --moss-soft: rgba(188, 198, 143, 0.12);
+  --focus: #dc8d50;
   --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   --body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121915; --surface: #19221c; --ink: #e6e0d4; --muted: #9ca296; --line: #2d3a31;
-    --forest: #d3e2cb; --moss: #8fae7d; --ember: #e08a5a;
-    --ember-soft: rgba(224, 138, 90, 0.14); --moss-soft: rgba(143, 174, 125, 0.12); --focus: #e08a5a;
-    color-scheme: dark;
-  }
-}
+#moor { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+.wrap { position: relative; z-index: 1; }
+#view { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px 18px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+#view textarea { background: rgba(255, 255, 255, 0.04); }
+#view .c-card, #view .empty { background: rgba(255, 255, 255, 0.035); }
+.tabs { text-shadow: 0 1px 10px rgba(0,0,0,0.7); }
+.foot { text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
+.a2hs { background: var(--solid) !important; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
@@ -67,7 +69,7 @@ a { color: var(--moss); }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--forest); }
 .brand svg { width: 28px; height: 28px; flex: none; }
 .eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: var(--forest); }
-.head { display: flex; flex-direction: column; gap: 10px; }
+.head { display: flex; flex-direction: column; gap: 10px; padding-top: 10vh; padding-bottom: 2vh; text-shadow: 0 2px 16px rgba(0,0,0,0.65); }
 .tagline { font-family: var(--display); font-style: italic; font-size: 1.15rem; color: var(--ember); }
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
 .tab {
@@ -259,6 +261,7 @@ details[open] summary .plus { transform: rotate(45deg); }
 </style>
 </head>
 <body>
+<canvas id="moor" aria-hidden="true"></canvas>
 <div class="wrap">
   <header class="head">
     <div class="brand">
@@ -785,6 +788,114 @@ window.addEventListener("pagehide", flush);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); });
 
 load(); render();
+</script>
+<script>
+/* Dawn on the moor: gritstone edges, heather, a stone circle at the four directions, cup-and-ring carvings, geese and embers. */
+(function () {
+  var cv = document.getElementById("moor"); if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext("2d"), back = document.createElement("canvas"), front = document.createElement("canvas");
+  var bctx = back.getContext("2d"), fctx = front.getContext("2d");
+  var W = 0, H = 0, DPR = 1, embers = [], still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var seed = 5; function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  var HZ = 0.62;
+  function cupRing(g, x, y, r, rings, ang) {
+    g.beginPath(); g.arc(x, y, r * 0.16, 0, Math.PI * 2); g.fill();
+    for (var k = 1; k <= rings; k++) { var rr = r * (0.16 + 0.84 * k / rings); g.beginPath(); g.arc(x, y, rr, ang + 0.18, ang + Math.PI * 2 - 0.18); g.stroke(); }
+    g.beginPath(); g.moveTo(x + Math.cos(ang) * r * 0.16, y + Math.sin(ang) * r * 0.16); g.lineTo(x + Math.cos(ang) * r * 1.35, y + Math.sin(ang) * r * 1.35); g.stroke();
+  }
+  function ridge(g, base, amp, f1, f2, ph, fill) {
+    g.fillStyle = fill; g.beginPath(); g.moveTo(0, H);
+    for (var x = 0; x <= W + 8; x += 8) { var y = base - amp * (0.55 * Math.sin(x * f1 + ph) + 0.3 * Math.sin(x * f2 + ph * 2.1) + 0.15 * Math.sin(x * f2 * 3.3 + ph)); g.lineTo(x, y); }
+    g.lineTo(W, H); g.closePath(); g.fill();
+  }
+  function drawBack() {
+    var g = bctx; seed = 5; var hz = H * HZ;
+    var sky = g.createLinearGradient(0, 0, 0, hz);
+    sky.addColorStop(0, "#0b0e18"); sky.addColorStop(0.35, "#25253a"); sky.addColorStop(0.62, "#6b4337"); sky.addColorStop(0.86, "#cf834c"); sky.addColorStop(1, "#f2c27e");
+    g.fillStyle = sky; g.fillRect(0, 0, W, hz + 2); g.fillStyle = "#f2c27e"; g.fillRect(0, hz, W, H - hz);
+    for (var i = 0; i < Math.round(W * H / 9000); i++) { var y = rnd() * hz * 0.45; g.fillStyle = "rgba(240,232,220," + (0.5 * (1 - y / (hz * 0.45))).toFixed(2) + ")"; g.beginPath(); g.arc(rnd() * W, y, 0.4 + rnd() * 0.8, 0, Math.PI * 2); g.fill(); }
+    var sx = W * 0.64, sr = Math.max(26, Math.min(W, H) * 0.06);
+    var glow = g.createRadialGradient(sx, hz, 0, sx, hz, Math.max(W, H) * 0.6);
+    glow.addColorStop(0, "rgba(255,214,150,0.55)"); glow.addColorStop(0.2, "rgba(240,160,90,0.22)"); glow.addColorStop(1, "rgba(240,160,90,0)");
+    g.fillStyle = glow; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#fff0cf"; g.beginPath(); g.arc(sx, hz + sr * 0.35, sr, Math.PI, 0); g.fill();
+  }
+  function stone(g, x, base, h, w, lean) {
+    g.beginPath(); g.moveTo(x - w / 2, base); g.lineTo(x - w * 0.45 + lean, base - h * 0.85); g.quadraticCurveTo(x + lean * 1.2, base - h * 1.05, x + w * 0.42 + lean, base - h * 0.8); g.lineTo(x + w / 2, base); g.closePath(); g.fill();
+    g.save(); g.strokeStyle = "rgba(245,180,110,0.35)"; g.lineWidth = Math.max(1, w * 0.12); g.beginPath(); g.moveTo(x + w * 0.42 + lean, base - h * 0.8); g.lineTo(x + w / 2, base); g.stroke(); g.restore();
+  }
+  function drawFront() {
+    var g = fctx; g.clearRect(0, 0, W, H); seed = 9; var hz = H * HZ;
+    ridge(g, hz + H * 0.01, H * 0.035, 0.004, 0.011, 1.3, "#6e5a6a");
+    var mist = g.createLinearGradient(0, hz - H * 0.02, 0, hz + H * 0.08); mist.addColorStop(0, "rgba(242,194,140,0)"); mist.addColorStop(0.5, "rgba(242,194,140,0.35)"); mist.addColorStop(1, "rgba(242,194,140,0)");
+    g.fillStyle = mist; g.fillRect(0, hz - H * 0.02, W, H * 0.1);
+    var eb = hz + H * 0.07; g.fillStyle = "#3a2c2a"; g.beginPath(); g.moveTo(0, H);
+    for (var x = 0; x <= W + 6; x += 6) {
+      var t = x / W, y = t < 0.48 ? eb - H * 0.06 + Math.sin(x * 0.05) * 1.5 : t < 0.56 ? eb - H * 0.06 + (t - 0.48) / 0.08 * H * 0.06 : eb + Math.sin(x * 0.01) * 4;
+      g.lineTo(x, y);
+    }
+    g.lineTo(W, H); g.closePath(); g.fill();
+    g.strokeStyle = "rgba(245,180,110,0.35)"; g.lineWidth = 1.2; g.beginPath(); g.moveTo(0, eb - H * 0.06); g.lineTo(W * 0.48, eb - H * 0.06); g.stroke();
+    var mb = H * 0.8; g.fillStyle = "#2a201b"; g.beginPath(); g.moveTo(0, H);
+    for (var x2 = 0; x2 <= W + 6; x2 += 6) g.lineTo(x2, mb - Math.sin(x2 * 0.006 + 0.7) * H * 0.02); g.lineTo(W, H); g.closePath(); g.fill();
+    for (var hh = 0; hh < Math.round(W * 1.6); hh++) { var hx = rnd() * W, hy = mb + rnd() * (H - mb); g.strokeStyle = rnd() < 0.5 ? "rgba(90,52,70,0.55)" : "rgba(60,44,30,0.6)"; g.lineWidth = 1; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + (rnd() - 0.5) * 2, hy - 2 - rnd() * 4); g.stroke(); }
+    var cx = W * 0.56, cy = H * 0.84, rx = Math.min(W * 0.26, 300), ry = H * 0.03, n = 12, list = [];
+    for (var k = 0; k < n; k++) { var th = k / n * Math.PI * 2; list.push({ th: th, card: k % 3 === 0 }); }
+    list.sort(function (a, b) { return Math.sin(a.th) - Math.sin(b.th); });
+    g.fillStyle = "#18120e";
+    list.forEach(function (s0) {
+      var depth = (Math.sin(s0.th) + 1) / 2, sc = 0.55 + 0.45 * depth, sx = cx + Math.cos(s0.th) * rx, sy = cy + Math.sin(s0.th) * ry;
+      var h = H * (s0.card ? 0.065 : 0.04) * sc, w = h * (s0.card ? 0.42 : 0.55);
+      stone(g, sx, sy, h, w, (rnd() - 0.5) * w * 0.3);
+    });
+    var bt = H * 0.88; g.fillStyle = "#231b16"; g.beginPath(); g.moveTo(-10, H); g.lineTo(-10, bt + H * 0.02);
+    g.quadraticCurveTo(W * 0.1, bt - H * 0.03, W * 0.24, bt); g.quadraticCurveTo(W * 0.34, bt + H * 0.02, W * 0.38, H); g.closePath(); g.fill();
+    g.strokeStyle = "rgba(245,190,130,0.30)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(-10, bt + H * 0.02); g.quadraticCurveTo(W * 0.1, bt - H * 0.03, W * 0.24, bt); g.stroke();
+    g.strokeStyle = "rgba(240,200,150,0.22)"; g.fillStyle = "rgba(240,200,150,0.22)"; g.lineWidth = 1.2;
+    var u = Math.min(W, H) * 0.028;
+    cupRing(g, W * 0.09, bt + H * 0.045, u * 1.4, 3, 0.4); cupRing(g, W * 0.2, bt + H * 0.06, u, 2, 2.2); cupRing(g, W * 0.15, bt + H * 0.095, u * 0.7, 1, -1);
+    var vig = g.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.85);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.45)"); g.fillStyle = vig; g.fillRect(0, 0, W, H);
+  }
+  function motif(g, time) {
+    var a = 0.08 + 0.03 * Math.sin(time / 3000), u = Math.min(W * 0.22, 150), x = W < 700 ? W * 0.74 : W / 2 + 200, y = Math.min(H * 0.2, 170);
+    g.strokeStyle = "rgba(220,141,80," + a.toFixed(3) + ")"; g.fillStyle = g.strokeStyle; g.lineWidth = 1.2;
+    cupRing(g, x, y, u, 5, 2.4); cupRing(g, x + u * 1.35, y + u * 0.9, u * 0.45, 2, 3.6); cupRing(g, x - u * 1.1, y + u * 1.05, u * 0.3, 1, 0.8);
+  }
+  function geese(g, time) {
+    var span = W * 1.5, x0 = ((time / 95000) % 1) * span - W * 0.25, y0 = H * HZ * 0.42, sp = Math.max(9, W * 0.014);
+    g.strokeStyle = "rgba(28,20,18,0.75)"; g.lineWidth = 1.4;
+    for (var i = 0; i < 11; i++) {
+      var side = i % 2 ? 1 : -1, rank = Math.ceil(i / 2), bx = x0 - rank * sp * 1.1, by = y0 + side * rank * sp * 0.55 + Math.sin(time / 4000 + i) * 1.5, f = Math.sin(time / 230 + i * 0.9) * sp * 0.22, s = sp * 0.45;
+      g.beginPath(); g.moveTo(bx - s, by - f); g.quadraticCurveTo(bx - s * 0.4, by - f * 0.2, bx, by); g.quadraticCurveTo(bx + s * 0.4, by - f * 0.2, bx + s, by - f); g.stroke();
+    }
+  }
+  function size() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2); W = window.innerWidth; H = window.innerHeight;
+    [cv, back, front].forEach(function (c) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
+    cv.style.width = W + "px"; cv.style.height = H + "px";
+    [ctx, bctx, fctx].forEach(function (g) { g.setTransform(DPR, 0, 0, DPR, 0, 0); });
+    drawBack(); drawFront();
+    embers = []; for (var m = 0; m < Math.round(W / 40); m++) embers.push({ x: Math.random() * W * 0.4, y: H * (0.6 + Math.random() * 0.4), r: 0.7 + Math.random() * 1.3, s: 0.15 + Math.random() * 0.3, p: Math.random() * 6.3 });
+    frame(still ? 30000 : 0);
+  }
+  function frame(time) {
+    ctx.clearRect(0, 0, W, H); ctx.drawImage(back, 0, 0, W, H);
+    motif(ctx, time); geese(ctx, time);
+    ctx.drawImage(front, 0, 0, W, H);
+    for (var k = 0; k < embers.length; k++) {
+      var o = embers[k];
+      if (!still) { o.y -= o.s; o.x += Math.sin(time / 1800 + o.p) * 0.25 + 0.05; if (o.y < H * 0.3) { o.y = H * 0.99; o.x = Math.random() * W * 0.4; } }
+      var a = 0.25 + 0.4 * (0.5 + 0.5 * Math.sin(time / 600 + o.p));
+      var gr = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r * 4);
+      gr.addColorStop(0, "rgba(255,170,90," + a.toFixed(3) + ")"); gr.addColorStop(1, "rgba(255,120,60,0)");
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(o.x, o.y, o.r * 4, 0, Math.PI * 2); ctx.fill();
+    }
+    if (!still) requestAnimationFrame(frame);
+  }
+  var t0; window.addEventListener("resize", function () { clearTimeout(t0); t0 = setTimeout(function () { if (Math.abs(window.innerWidth - W) > 40 || Math.abs(window.innerHeight - H) > 140) size(); }, 200); });
+  size();
+})();
 </script>
 <!-- Add to home screen prompt -->
 <style>
