@@ -219,6 +219,43 @@ details[open] summary .plus { transform: rotate(45deg); }
   .month .chips { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Course */
+.course { display: flex; flex-direction: column; gap: 18px; }
+.c-head { display: flex; flex-direction: column; gap: 10px; }
+.c-prog { height: 6px; border-radius: 3px; background: var(--moss-soft); overflow: hidden; }
+.c-prog span { display: block; height: 100%; background: var(--moss); border-radius: 3px; }
+.lessons { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.lesson-row { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 13px 2px; cursor: pointer; }
+.lesson-row:hover { background: var(--moss-soft); }
+.l-num { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--moss); color: var(--moss); display: grid; place-items: center; font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.l-num.done { background: var(--moss); color: var(--bg); }
+.l-main { min-width: 0; display: flex; flex-direction: column; }
+.l-title { font-family: var(--display); font-size: 1.2rem; font-weight: 600; color: var(--forest); line-height: 1.2; }
+.l-sub { font-size: 0.8rem; color: var(--muted); }
+.l-meta { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.c-lesson h2 { font-size: 1.6rem; }
+.c-lead { font-family: var(--display); font-style: italic; color: var(--ember); font-size: 1.1rem; }
+.c-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; min-height: 300px; animation: cardIn .25s ease-out; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.c-count { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--ember); }
+.c-card h3 { font-size: 1.55rem; }
+.c-body { display: flex; flex-direction: column; gap: 10px; font-size: 1rem; line-height: 1.65; max-width: 60ch; }
+.c-body p { margin: 0; }
+.c-body ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 9px; }
+.c-body li::marker { color: var(--ember); }
+.c-body strong { color: var(--forest); font-weight: 600; }
+.c-try { margin-top: auto; border-left: 3px solid var(--moss); background: var(--moss-soft); border-radius: 0 10px 10px 0; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.c-try span { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--moss); }
+.c-try p { margin: 0; font-size: 0.93rem; }
+.c-dots { display: flex; gap: 6px; justify-content: center; }
+.c-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.c-dots i.past { background: var(--moss); opacity: 0.5; }
+.c-dots i.on { background: var(--ember); width: 18px; border-radius: 4px; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .c-card { animation: none; } }
+@media (max-width: 520px) { .lesson-row { grid-template-columns: 34px 1fr; } .l-meta { display: none; } .c-card { padding: 18px 16px 20px; min-height: 340px; } }
 </style>
 </head>
 <body>
@@ -249,145 +286,6 @@ details[open] summary .plus { transform: rotate(45deg); }
 
   <footer class="foot">Saved in this browser only, on this device. Export a copy now and again, and always before clearing your browsing data.</footer>
 </div>
-
-<template id="guide-tpl">
-  <div class="guide">
-    <details open>
-      <summary><h3>How to use this journal</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">Take what you need. Everything here is an invitation.</p>
-        <ul>
-          <li><strong>Sit first, write after.</strong> Leave the phone in your pocket while you sit. Tap <strong>New sit</strong> once you're done and capture what you noticed.</li>
-          <li><strong>Tag your visitors.</strong> Add birds, animals, plants and insects to <strong>Visitors</strong>, separated by commas. They gather on the Patterns tab, with when you first and last saw them.</li>
-          <li><strong>Try the Four Shields.</strong> If you like, pick the direction that felt most alive. It's optional. The compass on the Patterns tab shows where your sits tend to sit.</li>
-          <li><strong>Watch the year turn.</strong> The Patterns tab lays your sits out month by month, and shows how settled you felt arriving and leaving.</li>
-        </ul>
-        <p class="g-sub">Add it to your home screen</p>
-        <p>It then opens like an app, full screen, with the tree icon.</p>
-        <ul>
-          <li><strong>iPhone.</strong> Open this page in Safari. Tap the <strong>Share</strong> button, then <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
-          <li><strong>Android.</strong> Open this page in Chrome. Tap the <strong>⋮</strong> menu, then <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
-          <li><strong>Do this first, then always use the icon.</strong> On iPhone, the home screen version keeps its own copy of your sits, separate from Safari. Safari can also clear data for sites you haven't opened in a while, which home screen apps are protected from.</li>
-        </ul>
-        <p class="g-sub">Keeping your sits safe</p>
-        <ul>
-          <li><strong>Saved in this browser only.</strong> Your sits live on this one device. Clearing your browsing data, using a private window or changing phone will lose them.</li>
-          <li><strong>Export now and again.</strong> On the Journal or Patterns tab, tap <strong>Export</strong> to save every sit as a text file. Do it every few weeks, and always before you clear your browsing data or change phone.</li>
-          <li><strong>Your location stays with you.</strong> If you save a location, it's stored on your device only. Nothing is sent anywhere.</li>
-        </ul>
-      </div>
-    </details>
-    <details>
-      <summary><h3>What a sit spot is</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">One place. Visited again and again. Until it starts to know you back.</p>
-        <p>A sit spot is a single place outdoors that you return to regularly, and sit quietly. That's it. No task, no goal, no performance.</p>
-        <p>The magic is in the repetition. The first time, you see a tree. By the tenth, you know which branch the robin sings from, where the puddle forms after rain, and what the light does at four o'clock in November. You stop being a visitor and start becoming part of the place.</p>
-        <p>The practice was popularised by Jon Young, a naturalist and tracker, as a core routine of nature connection. Many outdoor practitioners now use it with clients and for themselves.</p>
-      </div>
-    </details>
-    <details>
-      <summary><h3>Choosing your spot</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">Close beats beautiful. The best spot is the one you'll actually go to.</p>
-        <ul>
-          <li><strong>Near home.</strong> Five minutes away will get visited. Forty minutes away will become a nice idea.</li>
-          <li><strong>A city park bench counts.</strong> So does a canal towpath, a corner of the allotment, or the back step. Bushcraft to the city.</li>
-          <li><strong>Somewhere with life.</strong> A bit of edge helps: where trees meet grass, or land meets water. Edges are where the wildlife is busiest.</li>
-          <li><strong>Somewhere you feel safe enough</strong> to soften your attention. If you're on guard the whole time, choose again.</li>
-          <li><strong>Stick with it.</strong> Give one spot a full season before you change it.</li>
-        </ul>
-      </div>
-    </details>
-    <details>
-      <summary><h3>How to sit</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">Arrive. Open. Stay. Let it be simple.</p>
-        <ul>
-          <li><strong>Arrive.</strong> Walk the last bit slowly. Notice your breath and your feet. Let the day's noise settle.</li>
-          <li><strong>Open the senses, one at a time.</strong> What can you hear, near and far? What can you smell? What's touching your skin? Then let them all run together.</li>
-          <li><strong>Owl eyes.</strong> Soften your gaze and take in the whole view at once, edges included. This wide-angle vision picks up movement and tends to calm the nervous system.</li>
-          <li><strong>Stay still.</strong> Around twenty minutes is a good aim. Wildlife that scattered when you arrived often returns once you've gone quiet.</li>
-          <li><strong>Leave gently.</strong> Before you go, notice one thing you'd like to carry into the day.</li>
-        </ul>
-      </div>
-    </details>
-    <details>
-      <summary><h3>Reading the place</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">The birds will tell you what's happening, once you learn to listen.</p>
-        <p>Over time, you'll get a feel for the <em>baseline</em>: what your spot sounds and looks like when all is calm. Once you know the baseline, you notice when it changes.</p>
-        <ul>
-          <li><strong>Song and contact calls</strong> usually mean all is well. Birds are feeding, singing and keeping in touch.</li>
-          <li><strong>Alarm calls</strong> are sharp, repeated and urgent. They often mean a cat, a hawk, a dog or a person is moving through.</li>
-          <li><strong>Sudden silence</strong> can say as much as any call.</li>
-          <li><strong>You're part of it.</strong> Notice how the place responds to your arrival, and how long it takes to settle back.</li>
-        </ul>
-        <p>Jon Young's <em>What the Robin Knows</em> goes much deeper into bird language, if this catches you.</p>
-      </div>
-    </details>
-    <details>
-      <summary><h3>Nature as mirror</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">What you notice out there often says something about what's going on in here.</p>
-        <p>Some days you'll be drawn to the oak that hasn't moved in two hundred years. Other days, the wind ripping through the branches. Neither is random.</p>
-        <ul>
-          <li><strong>Just notice.</strong> What caught your eye today? What did it stir in you?</li>
-          <li><strong>Stay with it.</strong> No need to turn it into meaning straight away. Let the image sit.</li>
-          <li><strong>Inner weather.</strong> The journal asks how settled you felt arriving and leaving. Over time, you'll see what the practice is doing for you.</li>
-        </ul>
-        <p>Nature is the co-facilitator. You don't have to do all the work.</p>
-      </div>
-    </details>
-    <details>
-      <summary><h3>The Four Shields: an introduction</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">A compass for human nature, laid over the seasons of the year.</p>
-        <p>The Four Shields is a model from Steven Foster and Meredith Little, founders of the School of Lost Borders, a wilderness rites of passage school. It maps the human psyche onto the four directions, the four seasons and the stages of a life.</p>
-        <ul>
-          <li><strong>South: summer, the child.</strong> The body, feeling, instinct and play. Being fully alive in the senses.</li>
-          <li><strong>West: autumn, the adolescent.</strong> Turning inward. Dreams, shadow, introspection and the search for who we really are.</li>
-          <li><strong>North: winter, the adult.</strong> The mind, responsibility and holding others. Structure, service and getting things done.</li>
-          <li><strong>East: spring, the elder.</strong> Spirit, insight and renewal. Dawn after the long night.</li>
-        </ul>
-        <p>The idea is that a whole person moves around all four. Most of us get stuck in one or two, and the others call to us.</p>
-        <p class="g-sub">Using it at your sit spot</p>
-        <ul>
-          <li>After a sit, ask which direction felt most alive. Pick it in the journal if one stands out.</li>
-          <li>Over the months, the compass on the Patterns tab shows where you tend to live, and which directions you visit less.</li>
-          <li>Try sitting facing a different direction, and notice what changes.</li>
-        </ul>
-        <p>This is a light introduction to a deep model. Foster and Little's work echoes older earth-based traditions. We offer it here as one map among many, and as they shared it, not as a teaching we own. Their book, <em>The Four Shields</em>, goes much further.</p>
-      </div>
-    </details>
-    <details>
-      <summary><h3>Safety and access</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">Look after yourself, so you can soften.</p>
-        <ul>
-          <li><strong>Let someone know</strong> where you'll be if your spot is quiet or remote.</li>
-          <li><strong>Dress for sitting still.</strong> You'll get colder than you expect. A sit mat helps.</li>
-          <li><strong>Dusk and dark</strong> can be beautiful, but choose a spot you know well for them.</li>
-          <li><strong>Ticks</strong> live in long grass and bracken. Check yourself afterwards.</li>
-          <li><strong>Access is for everyone.</strong> A bench by a path, a wheelchair-friendly spot, a balcony or an open window all count. On hard days, a window is enough.</li>
-        </ul>
-      </div>
-    </details>
-    <details>
-      <summary><h3>Further reading</h3><span class="plus">+</span></summary>
-      <div class="g-body">
-        <p class="g-lead">Take what you need. Leave the rest on the shelf.</p>
-        <ul>
-          <li><strong>What the Robin Knows.</strong> Jon Young. Bird language, the baseline and the sit spot.</li>
-          <li><strong>Coyote's Guide to Connecting with Nature.</strong> Jon Young, Ellen Haas and Evan McGown. The core routines of nature connection, including the sit spot.</li>
-          <li><strong>The Forest Unseen.</strong> David Haskell. A biologist watches one square metre of woodland for a year. A sit spot in book form.</li>
-          <li><strong>The Four Shields.</strong> Steven Foster and Meredith Little. The full model behind the compass in this journal.</li>
-        </ul>
-        <p>rewildingtherapies.com</p>
-      </div>
-    </details>
-  </div>
-</template>
 
 <script>
 const KEY = "top-sit-spot-v1";
@@ -442,6 +340,120 @@ function scheduleSave() {
 }
 function flush() { if (state.dirty) { clearTimeout(saveTimer); persist(); } }
 
+/* ---------- Guide: click-through course ---------- */
+const COURSE_KEY = "top-sitspot-course-v1";
+const COURSE_BLURB = "short lessons on the sit spot practice";
+const COURSE = [
+  { id: "start", title: "Getting started", lead: "How to use this journal, and keep your sits safe.", cards: [
+    { h: "Sit first, write after", b: `<p>Leave the phone in your pocket while you sit. The point is to be with the place, not your screen.</p><p>When you're done, tap <strong>New sit</strong> on the Journal tab and capture what you noticed. It saves as you type, and it remembers your usual spot, so the location fills itself in next time.</p>` },
+    { h: "Tag your visitors", b: `<p>Add the birds, animals, plants and insects you meet to <strong>Visitors</strong>, separated by commas. Robin, wren, holly.</p><p>Don't worry about proper names. "Small brown bird with a cocked tail" is a perfectly good start. You can look it up later, or just keep calling it that.</p><p>The <strong>Patterns</strong> tab shows who keeps turning up, and when you first and last saw them.</p>` },
+    { h: "Watch the year turn", b: `<p>The Patterns tab lays your sits out month by month, and charts how settled you felt arriving and leaving.</p><p>That second chart is quiet evidence the practice is doing something. Most people arrive busier than they leave.</p>` },
+    { h: "Save it to your home screen", b: `<p>It then opens like an app, full screen, with the tree icon.</p><ul><li><strong>iPhone:</strong> open this page in Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</li><li><strong>Android:</strong> open it in Chrome, tap the <strong>⋮</strong> menu, then <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li></ul><p>Do this before you start, then always open it from the icon. On iPhone, the icon keeps its own copy of your sits, separate from Safari.</p>` },
+    { h: "Keep your sits safe", b: `<p>Your sits, including any location you save, stay on this device only. Nothing is sent anywhere.</p><p>That's private, but fragile. Clearing your browsing data, using a private window or changing phone will lose them.</p><p>Tap <strong>Export</strong> every few weeks, and always before you clear your data or change phone.</p>` },
+  ]},
+  { id: "what", title: "What a sit spot is", lead: "One place. Visited again and again. Until it starts to know you back.", cards: [
+    { h: "One place, again and again", b: `<p>A sit spot is a single place outdoors that you return to regularly, and sit quietly. That's it.</p><p>No task, no goal, no performance. You're not there to achieve anything. You're there to notice.</p>` },
+    { h: "The magic is in the repetition", b: `<p>The first time, you see a tree. By the tenth, you know which branch the robin sings from, where the puddle forms after rain, and what the light does at four o'clock in November.</p><p>You stop being a visitor, and start becoming part of the place.</p>` },
+    { h: "Where it comes from", b: `<p>The practice was popularised by Jon Young, a naturalist and tracker, as a core routine of nature connection.</p><p>It's now used by forest school leaders, outdoor therapists and naturalists all over the world, with clients and for themselves.</p>` },
+    { h: "What it does for you", b: `<p>Regular, quiet time outside tends to settle the nervous system. Your attention widens. Your breathing slows. The mind gets a rest from its usual loops.</p><p>Over time, many people notice they feel more at home in their own skin, and more connected to where they live.</p>`, t: "Before your next sit, rate how settled you feel from 1 to 5. Do it again as you leave." },
+  ]},
+  { id: "choose", title: "Choosing your spot", lead: "Close beats beautiful. The best spot is the one you'll actually go to.", cards: [
+    { h: "Near home", b: `<p>Five minutes away will get visited. Forty minutes away will become a nice idea.</p><p>The practice works through repetition, so pick somewhere you can reach on a tired Tuesday, not just a sunny Sunday.</p>` },
+    { h: "A city park bench counts", b: `<p>So does a canal towpath, a corner of the allotment, a churchyard or the back step.</p><p>Wildlife lives in cities too. A city spot can be just as rich as a remote one, and far easier to keep coming back to. Bushcraft to the city.</p>` },
+    { h: "Look for edges", b: `<p>Edges are where wildlife is busiest: where trees meet grass, hedge meets field, or land meets water.</p><p>A spot with a bit of edge in view gives you more to notice, and more visitors over the year.</p>` },
+    { h: "Safe enough to soften", b: `<p>Choose somewhere you feel safe enough to let your guard down a little.</p><p>If you're on alert the whole time, scanning for people or worrying about your bag, the practice can't land. That's not a failure. It just means it's time to choose again.</p>` },
+    { h: "Stick with it", b: `<p>Give one spot a full season before you change it. The first few visits are often the least interesting. The place needs time to show itself, and you need time to see it.</p>`, t: "Fill in your location in the next sit, and give your spot a name of your own." },
+  ]},
+  { id: "sit", title: "How to sit", lead: "Arrive. Open. Stay. Let it be simple.", cards: [
+    { h: "Arrive", b: `<p>Walk the last bit slowly. Notice your breath and the feel of your feet on the ground.</p><p>Let the day's noise settle. There's no rush to be anywhere else.</p>` },
+    { h: "Open the senses, one at a time", b: `<p>What can you hear? Start with the nearest sound, then the furthest. What can you smell? What's touching your skin: air, sun, rain, the ground beneath you?</p><p>Spend a minute or two with each. Then let them all run together.</p>` },
+    { h: "Owl eyes", b: `<p>Soften your gaze and take in the whole view at once, edges included, without focusing on any one thing.</p><p>This wide-angle vision picks up movement you'd otherwise miss. Many people find it calms the nervous system too.</p>`, t: "Try two minutes of owl eyes at your next sit. Notice what moves at the edges." },
+    { h: "Stay still", b: `<p>Around twenty minutes is a good aim, though five still counts.</p><p>When you arrive, the place reacts. Birds go quiet or move off. Stay still and quiet, and life often returns within ten or fifteen minutes.</p>` },
+    { h: "Leave gently", b: `<p>Before you go, notice one thing you'd like to carry into the day. A sound, an image, a feeling.</p><p>That becomes the <strong>One thing to carry</strong> line in your journal, and the title of the sit.</p>` },
+  ]},
+  { id: "read", title: "Reading the place", lead: "The birds will tell you what's happening, once you learn to listen.", cards: [
+    { h: "The baseline", b: `<p>Over time, you'll get a feel for your spot's <em>baseline</em>: what it sounds and looks like when all is calm.</p><p>Once you know the baseline, you notice when it changes. That's where the stories are.</p>` },
+    { h: "Song and contact calls", b: `<p>Birdsong and soft contact calls usually mean all is well. Birds are feeding, singing and keeping in touch with each other.</p><p>A relaxed, chattering hedge is a hedge with nothing to worry about.</p>` },
+    { h: "Alarm calls", b: `<p>Alarm calls are sharp, repeated and urgent. A blackbird's loud rattling alarm, or a wren scolding hard from the brambles.</p><p>They often mean a cat, a hawk, a dog or a person is moving through. Follow the alarm with your eyes and see what's coming.</p>` },
+    { h: "Silence speaks too", b: `<p>Sudden silence can say as much as any call. When a whole area goes quiet, something has usually changed.</p><p>And notice your own part in it: how the place responds to your arrival, and how long it takes to settle back.</p>`, t: "At your next sit, notice when the birds go quiet, and see if you can find out why." },
+    { h: "Going deeper", b: `<p>Jon Young's book <em>What the Robin Knows</em> goes much further into bird language, if this catches you. It's one of the best ways to deepen the practice.</p>` },
+  ]},
+  { id: "mirror", title: "Nature as mirror", lead: "What you notice out there often says something about what's going on in here.", cards: [
+    { h: "What draws you", b: `<p>Some days you'll be drawn to the oak that hasn't moved in two hundred years. Other days, the wind ripping through the branches, or the stream that won't stop moving.</p><p>Neither is random. What catches your eye often reflects something in you.</p>` },
+    { h: "Just notice", b: `<p>No need to turn it into meaning straight away. Just notice what caught your attention, and what it stirred.</p><p>Let the image sit with you. Sometimes it makes sense days later.</p>`, t: "In your next sit, write one line in What stirred in me, even if it's just a feeling." },
+    { h: "Inner weather", b: `<p>Each sit asks how settled you felt arriving and leaving. It also asks about your inner weather: what stirred in you while you sat.</p><p>Over weeks, you'll start to see your own seasons alongside the land's.</p>` },
+    { h: "Nature is the co-facilitator", b: `<p>You don't have to do all the work. The place does a lot of it.</p><p>Show up, sit down, and let the land meet you halfway.</p>` },
+  ]},
+  { id: "shields", title: "The Four Shields", lead: "A compass for human nature, laid over the seasons of the year.", cards: [
+    { h: "A map of the whole person", b: `<p>The Four Shields is a model from Steven Foster and Meredith Little, founders of the School of Lost Borders, a wilderness rites of passage school.</p><p>It maps the human psyche onto the four directions, the four seasons and the stages of a life.</p>` },
+    { h: "South and West", b: `<ul><li><strong>South: summer, the child.</strong> The body, feeling, instinct and play. Being fully alive in the senses.</li><li><strong>West: autumn, the adolescent.</strong> Turning inward. Dreams, shadow, introspection and the search for who we really are.</li></ul>` },
+    { h: "North and East", b: `<ul><li><strong>North: winter, the adult.</strong> The mind, responsibility and holding others. Structure, service and getting things done.</li><li><strong>East: spring, the elder.</strong> Spirit, insight and renewal. Dawn after the long night.</li></ul>` },
+    { h: "Moving round the circle", b: `<p>The idea is that a whole person moves around all four. Most of us get stuck in one or two, and the others call to us.</p><p>A busy parent might live in the North for years, and long for the play of the South.</p>` },
+    { h: "Using it at your sit spot", b: `<p>After a sit, ask which direction felt most alive, and pick it in the journal if one stands out. The compass on the Patterns tab shows where you tend to live, and which directions you visit less.</p><p>You can also try sitting facing a different direction, and notice what changes.</p>`, t: "Which shield have you been living in lately? Which one is calling?" },
+    { h: "Held lightly", b: `<p>This is a light introduction to a deep model. Foster and Little's work echoes older earth-based traditions.</p><p>We offer it here as one map among many, and as they shared it, not as a teaching we own. Their book, <em>The Four Shields</em>, goes much further.</p>` },
+  ]},
+  { id: "safe", title: "Safety and access", lead: "Look after yourself, so you can soften.", cards: [
+    { h: "Before you go", b: `<ul><li><strong>Let someone know</strong> where you'll be if your spot is quiet or remote.</li><li><strong>Check the weather.</strong> The Weather Wise tool in the Toolkit can help.</li><li><strong>Phone charged,</strong> in your pocket, on silent.</li></ul>` },
+    { h: "Dress for sitting still", b: `<p>You'll get colder than you expect. Sitting still burns far less heat than walking.</p><p>Add a layer before you sit, not when you're already cold. A sit mat keeps the cold ground away and makes a big difference.</p>` },
+    { h: "Dusk, dark and ticks", b: `<p>Dusk and dark can be beautiful times to sit, but choose a spot you know well, with an easy route out, and bring a head torch.</p><p>Ticks live in long grass and bracken. Check yourself afterwards.</p>` },
+    { h: "Access is for everyone", b: `<p>A bench by a path, a wheelchair-friendly spot, a balcony or an open window all count.</p><p>On hard days, a window is enough. The practice is about attention, not distance from a road.</p>` },
+  ]},
+  { id: "reading", title: "Further reading", lead: "Take what you need. Leave the rest on the shelf.", cards: [
+    { h: "Where to go next", b: `<ul><li><strong>What the Robin Knows.</strong> Jon Young. Bird language, the baseline and the sit spot.</li><li><strong>Coyote's Guide to Connecting with Nature.</strong> Jon Young, Ellen Haas and Evan McGown. The core routines of nature connection.</li><li><strong>The Forest Unseen.</strong> David Haskell. A biologist watches one square metre of woodland for a year.</li><li><strong>The Four Shields.</strong> Steven Foster and Meredith Little. The model behind the compass.</li></ul>` },
+    { h: "Same place. Different day.", b: `<p>That's the course. Come back to any lesson whenever you need it.</p><p>Share what you're noticing in The Outdoor Practice community. Other people's sit spots have a way of deepening your own.</p><p>rewildingtherapies.com</p>` },
+  ]},
+];
+
+const course = { lesson: null, card: 0, finished: false };
+function courseDone() { try { return new Set(JSON.parse(localStorage.getItem(COURSE_KEY)) || []); } catch (e) { return new Set(); } }
+function markDone(id) { const s = courseDone(); s.add(id); try { localStorage.setItem(COURSE_KEY, JSON.stringify([...s])); } catch (e) {} }
+function courseHTML() {
+  const done = courseDone();
+  if (!course.lesson) {
+    const n = COURSE.filter(l => done.has(l.id)).length;
+    const next = COURSE.find(l => !done.has(l.id)) || COURSE[0];
+    return `<div class="course">
+      <div class="c-head"><h2>The Guide</h2><p class="toast">${COURSE.length} ${COURSE_BLURB}. A few minutes each. Take them in order, or dip in.</p>
+        <div class="c-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${COURSE.length}" aria-valuenow="${n}"><span style="width:${Math.round(n / COURSE.length * 100)}%"></span></div>
+        <div class="row spread"><span class="toast">${n} of ${COURSE.length} done</span><button class="btn primary" data-lesson="${next.id}">${n ? (n === COURSE.length ? "Start again" : "Continue") : "Start"}: ${esc(next.title)}</button></div></div>
+      <ol class="lessons">${COURSE.map((l, i) => `<li><button class="lesson-row" data-lesson="${l.id}">
+        <span class="l-num ${done.has(l.id) ? "done" : ""}" aria-hidden="true">${done.has(l.id) ? "✓" : i + 1}</span>
+        <span class="l-main"><span class="l-title">${esc(l.title)}</span><span class="l-sub">${esc(l.lead)}</span></span>
+        <span class="l-meta">${l.cards.length} cards${done.has(l.id) ? '<span class="sr"> · done</span>' : ""}</span></button></li>`).join("")}</ol></div>`;
+  }
+  const li = COURSE.findIndex(l => l.id === course.lesson), L = COURSE[li];
+  const top = `<div class="row spread"><button class="btn ghost" data-course="menu">← All lessons</button><span class="toast">Lesson ${li + 1} of ${COURSE.length}</span></div>`;
+  if (course.finished) {
+    const nx = COURSE[li + 1];
+    return `<div class="course">${top}<article class="c-card c-end"><span class="c-count">Lesson done</span><h3>${esc(L.title)}</h3><p>Nice work. Come back to it any time.</p>
+      <div class="row">${nx ? `<button class="btn primary" data-lesson="${nx.id}">Next: ${esc(nx.title)}</button>` : ""}<button class="btn" data-course="journal">Back to the journal</button><button class="btn ghost" data-course="menu">All lessons</button></div></article></div>`;
+  }
+  const C = L.cards[course.card], last = course.card === L.cards.length - 1;
+  return `<div class="course">${top}
+    <div class="c-lesson"><h2>${esc(L.title)}</h2><p class="c-lead">${esc(L.lead)}</p></div>
+    <article class="c-card" id="c-card" aria-live="polite">
+      <span class="c-count">${course.card + 1} of ${L.cards.length}</span>
+      <h3>${esc(C.h)}</h3><div class="c-body">${C.b}</div>
+      ${C.t ? `<div class="c-try"><span>Try this</span><p>${esc(C.t)}</p></div>` : ""}
+    </article>
+    <div class="c-dots" aria-hidden="true">${L.cards.map((_, i) => `<i class="${i === course.card ? "on" : i < course.card ? "past" : ""}"></i>`).join("")}</div>
+    <div class="row spread"><button class="btn" data-course="back" ${course.card === 0 ? "disabled" : ""}>Back</button>
+      <button class="btn primary" data-course="next">${last ? "Finish lesson" : "Next"}</button></div>
+  </div>`;
+}
+function openLesson(id, card) { course.lesson = id; course.card = card || 0; course.finished = false; go("guide"); }
+function courseNav(dir) {
+  const L = COURSE.find(l => l.id === course.lesson); if (!L || course.finished) return;
+  if (dir > 0) { if (course.card < L.cards.length - 1) course.card++; else { markDone(L.id); course.finished = true; } }
+  else if (course.card > 0) course.card--;
+  render(); const c = document.getElementById("c-card") || document.querySelector(".c-end"); if (c) c.scrollIntoView({ block: "nearest" });
+}
+let touchX = null;
+document.addEventListener("touchstart", e => { if (state.view === "guide" && course.lesson && e.target.closest(".c-card")) touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener("touchend", e => { if (touchX === null) return; const dx = e.changedTouches[0].clientX - touchX; touchX = null; if (Math.abs(dx) > 50) courseNav(dx < 0 ? 1 : -1); });
+document.addEventListener("keydown", e => { if (state.view !== "guide" || !course.lesson || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return; if (e.key === "ArrowRight") courseNav(1); if (e.key === "ArrowLeft") courseNav(-1); });
+
+
 /* ---------- Navigation ---------- */
 function go(view) {
   if (state.view === "edit" && view !== "edit") flush();
@@ -469,7 +481,7 @@ function render() {
   const v = $("#view");
   if (state.view === "journal") v.innerHTML = journalHTML();
   else if (state.view === "patterns") v.innerHTML = patternsHTML();
-  else if (state.view === "guide") { v.innerHTML = ""; v.appendChild($("#guide-tpl").content.cloneNode(true)); }
+  else if (state.view === "guide") v.innerHTML = courseHTML();
   else if (state.view === "edit") { v.innerHTML = editHTML(); bindEditor(); }
 }
 
@@ -483,7 +495,7 @@ function journalHTML() {
       <div class="empty">
         <h3>Nothing here yet</h3>
         <p>Your sits will gather here, newest first, with the weather, your visitors and the direction that felt alive. Go and sit first. Then tap <strong>New sit</strong> and write down what you noticed.</p>
-        <p>New to this? The <strong>Guide</strong> tab covers how to choose a spot, how to sit, and the Four Shields.</p>
+        <p>New to this? The <strong>Guide</strong> tab is a short course: choosing a spot, how to sit, reading the place, and the Four Shields.</p>
       </div></div>${msg}`;
   }
   return `<div class="sheet">${top}<div class="list">${list.map(d => {
@@ -666,7 +678,8 @@ function editHTML() {
       <div class="section-head"><h3>Inner weather</h3><span class="hint">what the place stirred in you</span></div>
       <div class="field"><label class="label" for="inner">What stirred in me</label><textarea id="inner" class="mid" data-k="inner">${esc(d.inner)}</textarea></div>
       <div class="field"><span class="label">Four Shields <em>optional. Which direction felt most alive?</em></span>
-        <div class="shields" id="shields">${SHIELDS.map(s => `<button type="button" class="shield" data-val="${s.id}" aria-pressed="${d.shield === s.id}"><b>${s.id}</b><span>${s.sub}</span><span>${s.hint}</span></button>`).join("")}</div></div>
+        <div class="shields" id="shields">${SHIELDS.map(s => `<button type="button" class="shield" data-val="${s.id}" aria-pressed="${d.shield === s.id}"><b>${s.id}</b><span>${s.sub}</span><span>${s.hint}</span></button>`).join("")}</div>
+        <a class="toast" href="#" data-guide="shields">What are the Four Shields?</a></div>
       <div class="field" ${d.shield ? "" : "hidden"} id="shield-note-wrap"><label class="label" for="shieldNote">What this direction brought</label><input type="text" id="shieldNote" data-k="shieldNote" value="${esc(d.shieldNote)}"></div>
       ${scale("leave", "Settled leaving")}
       <div class="field"><label class="label" for="carry">One thing to carry <em>into the day</em></label><input type="text" id="carry" data-k="carry" value="${esc(d.carry)}" placeholder="A single line"></div>
@@ -745,6 +758,15 @@ function exportText() {
 
 document.addEventListener("click", e => {
   const tab = e.target.closest(".tab"); if (tab) { exportMsg = ""; go(tab.dataset.view); return; }
+  const gl = e.target.closest("[data-guide]"); if (gl) { e.preventDefault(); flush(); openLesson(gl.dataset.guide, 0); return; }
+  const ls = e.target.closest("[data-lesson]"); if (ls) { openLesson(ls.dataset.lesson, 0); return; }
+  const cc = e.target.closest("[data-course]"); if (cc) {
+    const k = cc.dataset.course;
+    if (k === "menu") { course.lesson = null; course.finished = false; render(); window.scrollTo({ top: 0 }); }
+    else if (k === "journal") { course.lesson = null; course.finished = false; go("journal"); }
+    else courseNav(k === "next" ? 1 : -1);
+    return;
+  }
   if (e.target.closest("#new")) { newSit(); return; }
   const item = e.target.closest(".item"); if (item) { openSit(item.dataset.id); return; }
   if (e.target.closest(".export-btn")) {
